@@ -193,6 +193,7 @@ for i in range(1,8):
 print("all files are created successfully") 
 subprocess.run("ls -l ~/pythonLesson/C13_Exam/exam",shell=True)
 """
+"""
 import subprocess
 
 for i in range(8,21):
@@ -214,3 +215,127 @@ print("deleting sample files from exam folder")
 subprocess.run("rm ~/pythonLesson/C13_Exam/exam/samplefile*.txt",shell=True)
 print("all sample files deleted successfully from exam folder")
 subprocess.run("ls -l ~/pythonLesson/C13_Exam/exam",shell=True)
+"""
+"""
+import subprocess
+
+# Delete existing users
+print("Deleting existing users...")
+existing_users = ["Alice", "bob", "carol", "dave", "eve"]
+for user in existing_users:
+    subprocess.run(f"sudo userdel -r {user}", shell=True)
+print("All specified users have been deleted.\n")
+
+# Add new users using for loop
+print("Adding new users...")
+usernames = []
+num_users = int(input("How many users do you want to create? "))
+
+for i in range(num_users):
+    username = input(f"Enter username for user #{i+1}: ")
+    subprocess.run(f"sudo useradd -m {username}", shell=True)
+    usernames.append(username)
+    print(f"✓ User {username} has been added.")
+
+print(f"\nTotal users created: {len(usernames)}\n")
+
+# Add new groups
+print("Adding new groups...")
+groupname = input("Please enter group name to add: ")
+result = subprocess.run(["sudo", "groupadd", groupname])
+if result.returncode == 0:
+    print(f"Group {groupname} has been added.\n")
+else:
+    print(f"Failed to add group {groupname}.\n")
+
+# List only newly created users
+print("Listing newly created users...")
+R = subprocess.run("cut -d: -f1 /etc/passwd", shell=True, capture_output=True, text=True)
+print("=" * 60)
+user_list = R.stdout.strip().split('\n')
+
+# Show only the users we just created
+print("Newly created users:")
+for username in usernames:
+    if username in user_list:
+        print(f"✓ {username}")
+    else:
+        print(f"✗ {username} (not found)")
+print("-- End of new user list --\n")
+
+# List only newly created group
+print("Listing newly created group...")
+R = subprocess.run("cut -d: -f1 /etc/group", shell=True, capture_output=True, text=True)
+print("=" * 60)
+group_list = R.stdout.strip().split('\n')
+
+# Show only the group we just created
+print("Newly created group:")
+if groupname in group_list:
+    print(f"✓ {groupname}")
+else:
+    print(f"✗ {groupname} (not found)")
+print("-- End of new group list --\n")
+
+# Add all created users to group
+print(f"Adding users to group {groupname}...")
+for username in usernames:
+    subprocess.run(f"sudo usermod -aG {groupname} {username}", shell=True)
+    print(f"User {username} has been added to group {groupname}.")
+
+print("\n All operations completed successfully!")
+"""
+import subprocess
+
+#task 1:create many users in one command with for loop
+print("Adding new users...")
+usernames = []
+num_users = int(input("How many users do you want to create? "))
+for i in range(num_users):
+    username = input(f"Enter username for user #{i+1}: ")
+    subprocess.run(f"sudo useradd -m {username}", shell=True)
+    usernames.append(username)
+    print(f"✓ User {username} has been added.")
+
+#task 2: create 2 groups based on user input
+print("Adding new groups...")
+groupnames = []
+num_groups = int(input("How many groups do you want to create? "))
+for i in range(num_groups):
+    groupname = input(f"Enter group name for group #{i+1}: ")
+    subprocess.run(f"sudo groupadd {groupname}", shell=True)
+    groupnames.append(groupname)
+    print(f"✓ Group {groupname} has been added.")
+
+#add all created users to all created groups
+print("Adding users to groups...")
+for username in usernames:
+    for groupname in groupnames:
+        subprocess.run(f"sudo usermod -aG {groupname} {username}", shell=True)
+        print(f"User {username} has been added to group {groupname}.")
+
+#if user already exists delete user and recreate
+print("Recreating existing users if any...")
+for username in usernames:  
+    result = subprocess.run(f"getent passwd {username}", shell=True)
+    if result.returncode == 0:
+        subprocess.run(f"sudo userdel -r {username}", shell=True)
+        print(f"User {username} existed and has been deleted.")
+        subprocess.run(f"sudo useradd -m {username}", shell=True)
+        print(f"User {username} has been recreated.")
+    else:
+        print(f"User {username} does not exist, no action taken.")
+
+#use getent to verify users
+print("Verifying created users and groups...")
+subprocess.run("getent passwd", shell=True)
+print("=" * 60)
+print("Newly created users:")
+for username in usernames:
+    result = subprocess.run(f"getent passwd {username}", shell=True, capture_output=True, text=True)
+    if result.returncode == 0:
+        print(f"✓ {username}")
+    else:
+        print(f"✗ {username} (not found)")
+print("-- End of new user list --\n")
+
