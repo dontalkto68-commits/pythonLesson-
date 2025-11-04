@@ -285,6 +285,7 @@ for username in usernames:
 
 print("\n All operations completed successfully!")
 """
+"""
 import subprocess
 
 #task 1:create many users in one command with for loop
@@ -338,4 +339,48 @@ for username in usernames:
     else:
         print(f"✗ {username} (not found)")
 print("-- End of new user list --\n")
+"""
+#task 1 corrected:create many users in one command with for loop
+import subprocess
+number = int(input("How many users do you want to create? "))
+for number in range(1, number + 1):
+    Uname = input(f"Enter username for user #{number}: ")
+#if user exists delete user and recreate
+    r=subprocess.run("cut -d: -f1 /etc/passwd", shell=True, capture_output=True, text=True)
+    user_list = r.stdout.strip().split('\n')
+    if Uname in user_list:
+        subprocess.run(f"sudo userdel -r {Uname}", shell=True)
+        print(f" User {Uname} existed and has been deleted.")
+#create user
+    subprocess.run(f"sudo useradd -m {Uname}", shell=True)
+    print(f" User {Uname} has been added.")
 
+#task 2 corrected: create 2 groups based on user input
+groupnumber = int(input("How many groups do you want to create? "))
+for groupnumber in range(1, groupnumber + 1):
+    Gname = input(f"Enter group name for group #{groupnumber}: ")
+    subprocess.run(f"sudo groupadd {Gname}", shell=True)
+    print(f" Group {Gname} has been added.")
+    #add all created users to all created groups
+subprocess.run("sudo usermod -aG {Gname} {Uname}", shell=True)
+print(f" User {Uname} has been added to group {Gname}.")
+#print created users
+print("Verifying created users and groups...")
+result=subprocess.run("getent passwd", shell=True)
+print("=" * 60)
+print("Newly created users:")
+if result.returncode == 0:
+    print(f"✓ {Uname}")
+else:
+    print(f"✗ {Uname} (not found)")
+print("-- End of new user list --\n")
+#print created groups
+print("Verifying created groups...")
+result=subprocess.run("getent group", shell=True)
+print("=" * 60)
+print("Newly created groups:")
+if result.returncode == 0:
+    print(f"✓ {Gname}")
+else:
+    print(f"✗ {Gname} (not found)")
+print("-- End of new group list --\n")
