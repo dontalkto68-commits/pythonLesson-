@@ -386,6 +386,7 @@ else:
     print(f"✗ {Gname} (not found)")
 print("-- End of new group list --\n")
 """
+"""
 import subprocess
 #1 create file test.txt 
 subprocess.run("touch ~/test.txt",shell=True)
@@ -419,3 +420,79 @@ subprocess.run("sudo touch ~/C14/sample.txt",shell=True)
 subprocess.run("sudo chown root:root ~/C14/sample.txt",shell=True)
 print("Created sample.txt in C14 directory and changed owner to root")
 subprocess.run("ls -l ~/C14/sample.txt",shell=True)   
+"""
+import subprocess
+
+#create exam in home diretory
+subprocess.run ("sudo mkdir ~/exam", shell=True)
+#create nov11 inside code1 inside exam
+subprocess.run ("sudo mkdir -p ~/exam/code1/nov11", shell=True)
+#create nov 19 inside rem inside exam
+subprocess.run ("sudo mkdir -p ~/exam/rem/nov19", shell=True)
+#create nov 21 inside retake inside exam
+subprocess.run ("sudo mkdir -p ~/exam/retake/nov21", shell=True)
+#create file1.txt and file2.txt inside nov11
+subprocess.run ("sudo touch ~/exam/code1/nov11/file1.txt", shell=True)
+subprocess.run ("sudo touch ~/exam/code1/nov11/file2.txt", shell=True)
+#copy txt files from nov11 to rem
+subprocess.run ("sudo cp ~/exam/code1/nov11/*.txt ~/exam/rem", shell=True)
+#copy code1,rem amd reatke to backup folder inside home directory
+subprocess.run ("sudo mkdir -p ~/backup", shell=True)
+subprocess.run ("sudo cp -r ~/exam/code1 ~/backup", shell=True)
+subprocess.run ("sudo cp -r ~/exam/rem ~/backup", shell=True)
+subprocess.run 
+subprocess.run ("sudo getent group ITC13", shell=True)
+subprocess.run ("sudo getent group ITC14", shell=True)
+#display the group membership of ITuser3
+subprocess.run ("sudo id ITuser3", shell=True)
+
+#2
+#task1:create a directory and named("sudo cp -r ~/exam/retake ~/backup", shell=True)
+#display the strucututre of home directory at level 3 
+subprocess.run ("sudo tree -L 3 ~/", shell=True)
+
+#B
+#create 2 groups named ITC13 and ITC14
+subprocess.run ("sudo groupadd ITC13", shell=True)
+subprocess.run ("sudo groupadd ITC14", shell=True)
+#create users ITuser1 to ITuser4
+subprocess.run ("sudo useradd -m ITuser1", shell=True)
+subprocess.run ("sudo useradd -m ITuser2", shell=True)
+subprocess.run ("sudo useradd -m ITuser3", shell=True)
+subprocess.run ("sudo useradd -m ITuser4", shell=True)
+#add ITuser1 and ITuser2 to ITC13  
+subprocess.run ("sudo getent group ITC13", shell=True)
+subprocess.run ("sudo getent group ITC14", shell=True)
+#display the group membership of ITuser3
+subprocess.run ("sudo id ITuser3", shell=True)
+
+#2
+#task1:create a directory and named based on user input
+dir_name = input("Enter directory name to create: ")
+subprocess.run (f"sudo mkdir -p ~/{dir_name}", shell=True)
+print(f"Directory {dir_name} created successfully.")
+#create 20 files inside the directory and name them C13File1.txt C13File2.txt ... C13File20.txt
+for i in range(1,21):
+    subprocess.run (f"sudo touch ~/{dir_name}/C13File{i}.txt", shell=True)
+    print(f"Created file C13File{i}.txt inside {dir_name} directory.")
+#copy all created files to backup folder inside home directory
+subprocess.run (f"sudo mkdir -p ~/backup", shell=True)
+subprocess.run (f"sudo cp ~/{dir_name}/C13File*.txt ~/backup", shell=True)
+print(f"All files copied successfully to backup folder.")
+#show tree of home directory
+subprocess.run ("sudo tree ~/", shell=True)
+#TASK2 receive a group name that is required to be created by user if it doesnt exist display message
+group_name = input("Enter group name to create: ")
+subprocess.run (f"sudo groupadd {group_name}", shell=True)
+if subprocess.run (f"getent group {group_name}", shell=True).returncode == 0:
+    print(f"Group {group_name} created successfully.")
+else:
+    print(f"Failed to create group {group_name}.")
+#create 2 users named U1 and U2 and add them to the created group
+subprocess.run (f"sudo useradd -m U1", shell=True)
+subprocess.run (f"sudo useradd -m U2", shell=True)
+subprocess.run (f"sudo usermod -aG {group_name} U1", shell=True)
+subprocess.run (f"sudo usermod -aG {group_name} U2", shell=True)
+print(f"Users U1 and U2 created and added to group {group_name} successfully.")
+#display the group members of the created group
+subprocess.run (f"sudo getent group {group_name}", shell=True)  
