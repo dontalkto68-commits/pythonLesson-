@@ -340,6 +340,7 @@ for username in usernames:
         print(f"✗ {username} (not found)")
 print("-- End of new user list --\n")
 """
+"""
 #task 1 corrected:create many users in one command with for loop
 import subprocess
 number = int(input("How many users do you want to create? "))
@@ -384,3 +385,37 @@ if result.returncode == 0:
 else:
     print(f"✗ {Gname} (not found)")
 print("-- End of new group list --\n")
+"""
+import subprocess
+#1 create file test.txt 
+subprocess.run("touch ~/test.txt",shell=True)
+#create directory C14
+subprocess.run("mkdir -p ~/C14",shell=True)
+#list permission of newly created file and directory
+print("Listing permissions of newly created file and directory:")
+subprocess.run("ls -l ~/test.txt ~/C14",shell=True)
+
+#2 owner->all permission, group->read and write and other -> no permission
+subprocess.run("chmod 760 ~/test.txt",shell=True)
+print("Changed permissions of test.txt to 760 (owner: rwx, group: rw-, others: ---)")
+subprocess.run("ls -l ~/test.txt",shell=True)   
+#cahnge back to original permission using symbolic format
+subprocess.run("chmod u=rwx,g=rw,o=r ~/test.txt",shell=True)
+print("Changed permissions of test.txt back to original (owner: rwx, group: rw-, others: r--)")
+subprocess.run("ls -l ~/test.txt",shell=True)  
+
+#3 change root or another user for the owner of c14 directory
+subprocess.run("sudo chown root:root ~/C14",shell=True)
+print("Changed owner of C14 directory to root")
+subprocess.run("ls -l ~/C14",shell=True) 
+
+#4change directory permission in a way that only owner has all permission and group and other have no permission
+subprocess.run("chmod 700 ~/C14",shell=True)
+print("Changed permissions of C14 directory to 700 (owner: rwx, group: ---, others: ---)")
+subprocess.run("ls -l ~/C14",shell=True)
+
+#5create a new file and set root or another user as file owner
+subprocess.run("sudo touch ~/C14/sample.txt",shell=True)
+subprocess.run("sudo chown root:root ~/C14/sample.txt",shell=True)
+print("Created sample.txt in C14 directory and changed owner to root")
+subprocess.run("ls -l ~/C14/sample.txt",shell=True)   
